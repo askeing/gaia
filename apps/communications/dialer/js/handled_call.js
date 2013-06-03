@@ -166,7 +166,11 @@ HandledCall.prototype.remove = function hc_remove() {
 };
 
 HandledCall.prototype.connected = function hc_connected() {
-  this.recentsEntry.type += '-connected';
+  if (this.recentsEntry &&
+     (this.recentsEntry.type.indexOf('-connected') == -1)) {
+       this.recentsEntry.type += '-connected';
+     }
+  
 
   if (!this.node)
     return;
