@@ -96,15 +96,6 @@ function iconDescriptor(directory, app_name, entry_point) {
   };
 }
 
-function getDistributionFileContent(name, defaultContent) {
-  if (Gaia.distributionDir) {
-    let distributionFile = getFile(Gaia.distributionDir, name + '.json');
-    if (distributionFile.exists()) {
-      return getFileContent(distributionFile);
-    }
-  }
-  return JSON.stringify(defaultContent, null, '  ');
-}
 
 // zeroth grid page is the dock
 let customize = {"homescreens": [
@@ -320,3 +311,24 @@ content = {
 };
 
 writeContent(init, 'Calendar.Presets = ' + getDistributionFileContent('calendar', content) + ';');
+
+init = getFile(GAIA_DIR, 'apps', 'communications', 'contacts', 'config.json');
+content = {
+  'defaultContactsOrder': 'givenName',
+  'facebookEnabled': true,
+  'operationsTimeout': 25000,
+  'logLevel': 'DEBUG',
+  'facebookSyncPeriod': 24,
+  'testToken': ''
+};
+writeContent(init, getDistributionFileContent('communications', content));
+
+// Communications External Services
+init = getFile(GAIA_DIR, 'apps', 'communications', 'contacts', 'oauth2', 'js',
+               'parameters.js');
+content = JSON.parse(getFileContent(getFile(GAIA_DIR, 'build',
+                                       'communications_services.json')));
+
+writeContent(init, 'var fb = window.fb || {}; fb.oauthflow = window.fb.oauthflow || {}; ' +
+             'fb.oauthflow.params = ' +
+  getDistributionFileContent('communications_services', content) + ';');
